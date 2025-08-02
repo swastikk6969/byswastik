@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Puzzle of Love</title>
+  <style>
+    body {
+      background: #fff0f5;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    h2 {
+      margin-bottom: 20px;
+      color: #d10068;
+    }
+
+    .puzzle {
+      width: 300px;
+      height: 300px;
+      display: flex;
+      flex-wrap: wrap;
+      border-radius: 10px;
+      box-shadow: 0 0 15px pink;
+    }
+
+    .piece {
+      width: 100px;
+      height: 100px;
+      box-sizing: border-box;
+      border: 1px solid #fff;
+      background-color: hotpink;
+      color: white;
+      font-size: 24px;
+      font-weight: bold;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: grab;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Solve the Heart Puzzle ❤️</h2>
+
+  <div class="puzzle" id="puzzle">
+    <!-- JS will generate the pieces -->
+  </div>
+
+  <script>
+    const puzzle = document.getElementById('puzzle');
+    const correctOrder = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+
+    function createShuffledPuzzle() {
+      const numbers = [...correctOrder].sort(() => Math.random() - 0.5);
+      puzzle.innerHTML = '';
+      numbers.forEach(num => {
+        const piece = document.createElement('div');
+        piece.className = 'piece';
+        piece.draggable = true;
+        piece.textContent = num;
+        piece.dataset.number = num;
+        puzzle.appendChild(piece);
+      });
+    }
+
+    // Drag and drop logic
+    let dragged;
+
+    puzzle.addEventListener('dragstart', (e) => {
+      dragged = e.target;
+    });
+
+    puzzle.addEventListener('dragover', (e) => {
+      e.preventDefault();
+    });
+
+    puzzle.addEventListener('drop', (e) => {
+      if (e.target.classList.contains('piece')) {
+        let temp = document.createElement('div');
+        puzzle.replaceChild(temp, dragged);
+        puzzle.replaceChild(dragged, e.target);
+        puzzle.replaceChild(e.target, temp);
+        checkWin();
+      }
+    });
+
+    function checkWin() {
+      const currentOrder = Array.from(puzzle.children).map(
+        (piece) => parseInt(piece.dataset.number)
+      );
+      const isCorrect = correctOrder.every((num, i) => num === currentOrder[i]);
+      if (isCorrect) {
+        setTimeout(() => {
+          window.location.href = "index2.html"; // redirect on success
+        }, 500);
+      }
+    }
+
+    createShuffledPuzzle();
+  </script>
+
+</body>
+</html>
