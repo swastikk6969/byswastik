@@ -1,108 +1,123 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Puzzle of Love</title>
+  <meta charset="UTF-8" />
+  <title>Heart Puzzle</title>
   <style>
     body {
-      background: #fff0f5;
+      background-color: #ffe6f0;
+      font-family: 'Segoe UI', sans-serif;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       height: 100vh;
-      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
     }
 
     h2 {
-      margin-bottom: 20px;
       color: #d10068;
+      margin-bottom: 20px;
     }
 
     .puzzle {
-      width: 300px;
-      height: 300px;
-      display: flex;
-      flex-wrap: wrap;
-      border-radius: 10px;
-      box-shadow: 0 0 15px pink;
+      display: grid;
+      grid-template-columns: repeat(3, 100px);
+      gap: 10px;
     }
 
-    .piece {
+    .tile {
       width: 100px;
       height: 100px;
-      box-sizing: border-box;
-      border: 1px solid #fff;
       background-color: hotpink;
       color: white;
-      font-size: 24px;
+      font-size: 30px;
       font-weight: bold;
       display: flex;
-      justify-content: center;
       align-items: center;
-      cursor: grab;
+      justify-content: center;
+      border-radius: 15px;
+      cursor: pointer;
+      transition: transform 0.2s;
+      user-select: none;
+    }
+
+    .tile.selected {
+      background-color: #ff99c8;
+      transform: scale(1.1);
     }
   </style>
 </head>
 <body>
 
-  <h2>Solve the Heart Puzzle ❤️</h2>
-
-  <div class="puzzle" id="puzzle">
-    <!-- JS will generate the pieces -->
-  </div>
+  <h2>💖 Solve the Heart Puzzle 💖</h2>
+  <div class="puzzle" id="puzzle"></div>
 
   <script>
-    const puzzle = document.getElementById('puzzle');
+    const puzzle = document.getElementById("puzzle");
     const correctOrder = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+    let tiles = [];
+    let selectedTile = null;
 
-    function createShuffledPuzzle() {
-      const numbers = [...correctOrder].sort(() => Math.random() - 0.5);
+    function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+    }
+
+    function createPuzzle() {
+      let numbers = [...correctOrder];
+      shuffle(numbers);
       puzzle.innerHTML = '';
+      tiles = [];
+
       numbers.forEach(num => {
-        const piece = document.createElement('div');
-        piece.className = 'piece';
-        piece.draggable = true;
-        piece.textContent = num;
-        piece.dataset.number = num;
-        puzzle.appendChild(piece);
+        const tile = document.createElement("div");
+        tile.className = "tile";
+        tile.textContent = num;
+        tile.dataset.value = num;
+
+        tile.addEventListener("click", () => handleTileClick(tile));
+        tiles.push(tile);
+        puzzle.appendChild(tile);
       });
     }
 
-    // Drag and drop logic
-    let dragged;
+    function handleTileClick(tile) {
+      if (!selectedTile) {
+        tile.classList.add("selected");
+        selectedTile = tile;
+      } else if (tile === selectedTile) {
+        tile.classList.remove("selected");
+        selectedTile = null;
+      } else {
+        // Swap values
+        let temp = tile.textContent;
+        tile.textContent = selectedTile.textContent;
+        tile.dataset.value = selectedTile.dataset.value;
+        selectedTile.textContent = temp;
+        selectedTile.dataset.value = temp;
 
-    puzzle.addEventListener('dragstart', (e) => {
-      dragged = e.target;
-    });
+        selectedTile.classList.remove("selected");
+        selectedTile = null;
 
-    puzzle.addEventListener('dragover', (e) => {
-      e.preventDefault();
-    });
-
-    puzzle.addEventListener('drop', (e) => {
-      if (e.target.classList.contains('piece')) {
-        let temp = document.createElement('div');
-        puzzle.replaceChild(temp, dragged);
-        puzzle.replaceChild(dragged, e.target);
-        puzzle.replaceChild(e.target, temp);
         checkWin();
-      }
-    });
-
-    function checkWin() {
-      const currentOrder = Array.from(puzzle.children).map(
-        (piece) => parseInt(piece.dataset.number)
-      );
-      const isCorrect = correctOrder.every((num, i) => num === currentOrder[i]);
-      if (isCorrect) {
-        setTimeout(() => {
-          window.location.href = "index2.html"; // redirect on success
-        }, 500);
       }
     }
 
-    createShuffledPuzzle();
+    function checkWin() {
+      const currentOrder = Array.from(puzzle.children).map(tile => parseInt(tile.textContent));
+      const isSolved = currentOrder.every((val, idx) => val === correctOrder[idx]);
+      if (isSolved) {
+        setTimeout(() => {
+          alert("You solved it! ❤️");
+          window.location.href = "index2.html";
+        }, 300);
+      }
+    }
+
+    createPuzzle();
   </script>
 
 </body>
