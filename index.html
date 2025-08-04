@@ -1,10 +1,12 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Love Puzzle</title>
   <style>
+    * {
+      box-sizing: border-box;
+    }
     body {
       margin: 0;
       padding: 0;
@@ -18,57 +20,42 @@
       overflow: hidden;
       position: relative;
     }
-
     h1 {
       color: #e75480;
       font-size: 28px;
       margin-bottom: 20px;
-      animation: fadeIn 2s ease;
     }
-
-    /* Floating hearts */
-    .floating-heart {
-      position: absolute;
-      width: 20px;
-      height: 20px;
-      background: red;
-      transform: rotate(45deg);
-      animation: floatUp 5s infinite ease-in;
-      opacity: 0.6;
+    #puzzle-container {
+      display: grid;
+      grid-template-columns: repeat(3, 80px);
+      grid-template-rows: repeat(3, 80px);
+      gap: 5px;
+      margin-bottom: 30px;
     }
-
-    .floating-heart::before,
-    .floating-heart::after {
-      content: '';
-      position: absolute;
-      width: 20px;
-      height: 20px;
-      background: red;
-      border-radius: 50%;
+    .tile {
+      width: 80px;
+      height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      background-color: #ff80ab;
+      color: white;
+      font-weight: bold;
+      border-radius: 10px;
+      cursor: pointer;
+      user-select: none;
+      transition: background-color 0.2s;
     }
-
-    .floating-heart::before {
-      top: -10px;
-      left: 0;
+    .tile:hover {
+      background-color: #ff4081;
     }
-
-    .floating-heart::after {
-      top: 0;
-      left: -10px;
+    #heart-section {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      animation: fadeIn 2s ease forwards;
     }
-
-    @keyframes floatUp {
-      0% {
-        transform: translateY(0) rotate(45deg);
-        opacity: 0.6;
-      }
-      100% {
-        transform: translateY(-800px) rotate(45deg);
-        opacity: 0;
-      }
-    }
-
-    /* SVG Heart Beat */
     svg {
       width: 250px;
       height: 250px;
@@ -76,7 +63,6 @@
       margin: 0 auto;
       animation: beat 1s infinite;
     }
-
     @keyframes beat {
       0%, 100% {
         transform: scale(1);
@@ -85,9 +71,8 @@
         transform: scale(1.1);
       }
     }
-
     .continue-btn {
-      margin-top: 30px;
+      margin-top: 20px;
       padding: 12px 24px;
       font-size: 16px;
       background-color: #ff4081;
@@ -97,15 +82,12 @@
       cursor: pointer;
       box-shadow: 0 0 10px #ff4081aa;
       transition: all 0.3s ease;
-      animation: fadeIn 3s ease;
     }
-
     .continue-btn:hover {
       background-color: #d81b60;
       box-shadow: 0 0 20px #ff4081ee;
       transform: scale(1.05);
     }
-
     @keyframes fadeIn {
       from {
         opacity: 0;
@@ -119,46 +101,92 @@
   </style>
 </head>
 <body>
-
-  <!-- Floating hearts background -->
-  <div class="floating-heart" style="left: 10%; animation-delay: 0s;"></div>
-  <div class="floating-heart" style="left: 30%; animation-delay: 1s;"></div>
-  <div class="floating-heart" style="left: 50%; animation-delay: 2s;"></div>
-  <div class="floating-heart" style="left: 70%; animation-delay: 3s;"></div>
-  <div class="floating-heart" style="left: 90%; animation-delay: 4s;"></div>
-
   <h1>Solve the Puzzle 💖</h1>
+  <div id="puzzle-container"></div>  <div id="heart-section">
+    <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+      <path d="M100 180s-60-40-80-80 10-70 40-70 40 30 40 30 10-30 40-30 50 30 40 70-80 80-80 80z"
+            fill="red" />
+      <text x="100" y="90" text-anchor="middle" dominant-baseline="middle" fill="white" font-size="8" font-weight="bold">
+        Dare lag rha mujhe 😳
+      </text>
+      <text x="100" y="105" text-anchor="middle" dominant-baseline="middle" fill="white" font-size="7">
+        Apna reply ig pe bhej dena 😭
+      </text>
+      <text x="100" y="120" text-anchor="middle" dominant-baseline="middle" fill="white" font-size="7">
+        Gali mt dena 🥲
+      </text>
+    </svg>
+    <button class="continue-btn" onclick="window.location.href='index2.html'">Continue</button>
+  </div>  <script>
+    const puzzleContainer = document.getElementById('puzzle-container');
+    const heartSection = document.getElementById('heart-section');
+    let tiles = [];
 
-  <!-- SVG Heart with Centered Text -->
-  <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-    <path d="M100 180s-60-40-80-80 10-70 40-70 40 30 40 30 10-30 40-30 50 30 40 70-80 80-80 80z"
-          fill="red" />
+    function createPuzzle() {
+      tiles = [...Array(9).keys()].map(n => n + 1);
+      do {
+        tiles.sort(() => Math.random() - 0.5);
+      } while (!isSolvable(tiles));
+      puzzleContainer.innerHTML = '';
+      tiles.forEach((val, idx) => {
+        const tile = document.createElement('div');
+        tile.classList.add('tile');
+        tile.textContent = val;
+        tile.dataset.index = idx;
+        tile.addEventListener('click', () => swapTile(idx));
+        puzzleContainer.appendChild(tile);
+      });
+    }
 
-    <text x="100" y="90"
-          text-anchor="middle"
-          dominant-baseline="middle"
-          fill="white"
-          font-size="8"
-          font-weight="bold">
-      Dar lag rha mujhe 😳
-    </text>
-    <text x="100" y="105"
-          text-anchor="middle"
-          dominant-baseline="middle"
-          fill="white"
-          font-size="7">
-      Apna reply ig pe bhej dena 😭
-    </text>
-    <text x="100" y="120"
-          text-anchor="middle"
-          dominant-baseline="middle"
-          fill="white"
-          font-size="7">
-      Gali mt dena 🥲
-    </text>
-  </svg>
+    let firstClick = null;
 
-  <button class="continue-btn" onclick="window.location.href='index2.html'">Continue</button>
+    function swapTile(index) {
+      if (firstClick === null) {
+        firstClick = index;
+        puzzleContainer.children[index].style.backgroundColor = '#c2185b';
+      } else {
+        let temp = tiles[firstClick];
+        tiles[firstClick] = tiles[index];
+        tiles[index] = temp;
+        firstClick = null;
+        createPuzzleFromArray();
+        if (checkSolved()) {
+          showHeart();
+        }
+      }
+    }
 
-</body>
+    function createPuzzleFromArray() {
+      puzzleContainer.innerHTML = '';
+      tiles.forEach((val, idx) => {
+        const tile = document.createElement('div');
+        tile.classList.add('tile');
+        tile.textContent = val;
+        tile.dataset.index = idx;
+        tile.addEventListener('click', () => swapTile(idx));
+        puzzleContainer.appendChild(tile);
+      });
+    }
+
+    function checkSolved() {
+      return tiles.every((val, idx) => val === idx + 1);
+    }
+
+    function isSolvable(array) {
+      let invCount = 0;
+      for (let i = 0; i < 9 - 1; i++) {
+        for (let j = i + 1; j < 9; j++) {
+          if (array[i] > array[j]) invCount++;
+        }
+      }
+      return invCount % 2 === 0;
+    }
+
+    function showHeart() {
+      puzzleContainer.style.display = 'none';
+      heartSection.style.display = 'flex';
+    }
+
+    createPuzzle();
+  </script></body>
 </html>
