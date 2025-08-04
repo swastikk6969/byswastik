@@ -5,10 +5,6 @@
   <title>Love Puzzle</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    * {
-      box-sizing: border-box;
-    }
-
     body {
       font-family: 'Segoe UI', sans-serif;
       background: #fff0f5;
@@ -60,40 +56,9 @@
       text-align: center;
     }
 
-    .heart-wrapper {
-      position: relative;
+    svg {
       width: 200px;
-      height: 180px;
-      margin-bottom: 20px;
-    }
-
-    .heart {
-      position: absolute;
-      width: 100px;
-      height: 160px;
-      background: red;
-      border-radius: 100px 100px 0 0;
-      transform: rotate(-45deg);
-      top: 20px;
-      left: 50px;
-    }
-
-    .heart.right {
-      left: 0;
-      transform: rotate(45deg);
-    }
-
-    .heart-text {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 140px;
-      transform: translate(-50%, -50%);
-      color: white;
-      font-weight: bold;
-      font-size: 14px;
-      line-height: 1.4;
-      z-index: 2;
+      height: 200px;
     }
 
     .continue-btn {
@@ -116,15 +81,18 @@
   <div class="puzzle" id="puzzle"></div>
 
   <div class="heart-container" id="heartSection">
-    <div class="heart-wrapper">
-      <div class="heart"></div>
-      <div class="heart right"></div>
-      <div class="heart-text">
-        Dare lag rha mujhe<br>
-        apna reply ig pe bhej dena 😭<br>
+    <svg viewBox="0 0 100 100">
+      <path fill="red" d="M50 91.6l-5.2-4.8C20.8 65.2 2 48.4 2 30.2 2 17.6 12.6 7 25.2 7c7.6 0 14.8 3.6 19.4 9.4C49.8 10.6 57 7 64.6 7 77.2 7 87.8 17.6 87.8 30.2c0 18.2-18.8 35-42.8 56.6z"/>
+      <text x="50%" y="45%" text-anchor="middle" fill="white" font-size="4" font-weight="bold">
+        Dare lag rha mujhe
+      </text>
+      <text x="50%" y="55%" text-anchor="middle" fill="white" font-size="4" font-weight="bold">
+        apna reply ig pe bhej dena 😭
+      </text>
+      <text x="50%" y="65%" text-anchor="middle" fill="white" font-size="4" font-weight="bold">
         gali mt dena
-      </div>
-    </div>
+      </text>
+    </svg>
     <button class="continue-btn" onclick="window.location.href='index2.html'">Continue</button>
   </div>
 
